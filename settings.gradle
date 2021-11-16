@@ -1,0 +1,3 @@
+rootProject.name = "MultiTouchGestureListener"
+include ':app'
+include ':mutlitouch-gesture-detector'
