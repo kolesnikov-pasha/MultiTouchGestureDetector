@@ -1,17 +1,30 @@
 package com.pavel_kolesnikov.mutlitouch_gesture_detector
 
+import android.graphics.Matrix
 import android.view.MotionEvent
 import android.view.View
 import kotlin.math.min
 
-class MultitouchGestureDetector(
-    private val listener: MultitouchGestureListener
+class MultiTouchGestureDetector(
+    private val listener: MultiTouchGestureListener
 ) : View.OnTouchListener {
 
     private val session = GestureSession()
     private val gestureCurrentCoords = mutableMapOf<Int, Coordinates>()
-    val gestureMatrix
-    get() = session.gestureMatrix
+    val gestureMatrix = Matrix()
+    get() {
+        field.reset()
+        field.postConcat(session.gestureMatrix)
+        return field
+    }
+    val allGesturesMatrix = Matrix()
+    get() {
+        field.reset()
+        field.postConcat(fullTransformMatrix)
+        field.postConcat(gestureMatrix)
+        return field
+    }
+    private val fullTransformMatrix = Matrix()
 
     override fun onTouch(view: View, event: MotionEvent): Boolean {
         val action = event.actionMasked
@@ -52,6 +65,7 @@ class MultitouchGestureDetector(
         }
         if (session.isActive) {
             listener.onGestureEnd(this)
+            fullTransformMatrix.postConcat(gestureMatrix)
             session.stop()
         }
         session.start(gestureCurrentCoords)
@@ -66,6 +80,7 @@ class MultitouchGestureDetector(
         for (pointerId in session.pointerIds) {
             if (!currentPointerIds.contains(pointerId)) {
                 listener.onGestureEnd(this)
+                fullTransformMatrix.postConcat(gestureMatrix)
                 session.stop()
                 break
             }
