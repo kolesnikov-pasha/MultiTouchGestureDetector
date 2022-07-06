@@ -6,7 +6,7 @@ Android doesn't have multitouch detector which will be accurate enough to build 
 
 ## How to use it
 
-Just clone `multi-touch-detector` module to your project and use examples. 
+Just clone `multitouch-gesture-detector` module to your project and use examples. 
 TODO: add better documentation
 
 ## Examples
